@@ -3,7 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EventList</title>
+    <link rel="stylesheet" href="./style/index.css" />
+    <script async src="index.js" type="module"></script>
+    <title>EventList!</title>
   </head>
-  <body></body>
+  <body>
+    <header class="button-header">
+      <button id="add-new">Add New</button>
+    </header>
+    <main class="content">
+      <section class="event-table">
+        <header class="event-table__header">
+          <ul>
+            <li>Event name</li>
+            <li>Start date</li>
+            <li>End date</li>
+            <li>Actions</li>
+          </ul>
+        </header>
+      </section>
+      <section class="event">
+        <input type="text" aria-label="Event name" />
+        <input type="text" aria-label="Start date" />
+        <input type="text" aria-label="End date" />
+        <div id="edit-delete">
+          <button class="edit-delete">Edit</button>
+          <button class="edit-delete">Delete</button>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
