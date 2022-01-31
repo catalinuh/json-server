@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style/index.css" />
-    <script async src="index.js" type="module"></script>
+    <script async src="./index.js" type="module"></script>
     <title>EventList</title>
   </head>
   <body>
@@ -20,14 +20,16 @@
           <li>Actions</li>
         </ul>
       </section>
-      <section class="event">
-        <input type="text" aria-label="Event name" />
-        <input type="text" aria-label="Start date" />
-        <input type="text" aria-label="End date" />
-        <div id="edit-delete">
-          <button class="edit-delete">Edit</button>
-          <button class="edit-delete">Delete</button>
-        </div>
+      <section id="event-list__container">
+        <section class="event">
+          <input class="event-field" type="text" aria-label="Event name" />
+          <input class="start-field" type="text" aria-label="Start date" />
+          <input class="end-field" type="text" aria-label="End date" />
+          <div id="edit-delete">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </section>
       </section>
     </main>
   </body>
