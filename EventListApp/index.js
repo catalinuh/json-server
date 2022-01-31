@@ -14,16 +14,26 @@ const wikiApi = (() => {
       },
     }).then((response) => response.json());
 
-  const deleteEvent = (id) => {
-    fetch([baseURL, path, id].join('/')),
-      {
-        method: 'DELETE',
-      };
-  };
+  const deleteEvent = (id) =>
+    fetch([baseURL, path, id].join('/'), {
+      method: 'DELETE',
+    });
+
+  const editEvent = (id) =>
+    fetch([baseURL, path, id].join('/'), {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => (element.innerHTML = data.updatedAt));
+
   return {
     getEvents,
     addEvent,
     deleteEvent,
+    editEvent,
   };
 })();
 
@@ -50,11 +60,40 @@ const view = (() => {
     let tmp = '';
 
     array.forEach((elem) => {
+      let date1 = new Date(parseInt(elem.startDate.substring(0, 11)));
+      let date2 = new Date(parseInt(elem.endDate.substring(0, 11)));
+
       tmp += `
         <section class="event">
-            <input value=${elem.eventName} class="event-field" type="text" aria-label="Event name" disabled />
-            <input value=${elem.startDate} class="start-field" type="text" aria-label="Start date" disabled />
-            <input value=${elem.endDate} class="end-field" type="text" aria-label="End date" disabled />
+            <input value=${
+              elem.eventName
+            } class="event-field" type="text" aria-label="Event name" disabled />
+            <input value=${
+              date1.getFullYear() +
+              '-' +
+              String(
+                date1.getMonth() < 10
+                  ? '0' + date1.getMonth()
+                  : date1.getMonth()
+              ) +
+              '-' +
+              String(
+                date1.getDay() < 10 ? '0' + date1.getDay() : date1.getDay()
+              )
+            } class="start-field" type="date" aria-label="Start date" disabled />
+            <input value=${
+              date2.getFullYear() +
+              '-' +
+              String(
+                date2.getMonth() < 10
+                  ? '0' + date2.getMonth()
+                  : date2.getMonth()
+              ) +
+              '-' +
+              String(
+                date2.getDay() < 10 ? '0' + date2.getDay() : date2.getDay()
+              )
+            } class="end-field" type="date" aria-label="End date" disabled />
             <div id="edit-delete">
                 <button class="edit-btn">Edit</button>
                 <button class="delete-btn" id=${elem.id}>Delete</button>
@@ -103,6 +142,7 @@ const model = ((api, view) => {
   const getEvents = api.getEvents;
   const addEvent = api.addEvent;
   const deleteEvent = api.deleteEvent;
+  const editEvent = api.editEvent;
 
   return {
     Event,
@@ -110,6 +150,7 @@ const model = ((api, view) => {
     getEvents,
     addEvent,
     deleteEvent,
+    editEvent,
   };
 })(wikiApi, view);
 
@@ -131,8 +172,8 @@ const controller = ((model, view) => {
     newFields.innerHTML = `
         <section class="event">
             <input class="event-field" type="text" aria-label="Event name" />
-            <input class="start-field" type="text" aria-label="Start date" />
-            <input class="end-field" type="text" aria-label="End date" />
+            <input class="start-field" type="date" aria-label="Start date" />
+            <input class="end-field" type="date" aria-label="End date" />
             <div id="edit-delete">
                 <button class="save-btn">Save</button>
                 <button class="close-btn">Close</button>
@@ -171,10 +212,13 @@ const controller = ((model, view) => {
     });
   };
 
+  const editEvent = () => {};
+
   const bootstrap = () => {
     init();
     addEvent();
     deleteEvent();
+    editEvent();
   };
 
   return { bootstrap };
