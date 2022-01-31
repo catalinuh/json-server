@@ -5,15 +5,24 @@ const wikiApi = (() => {
   const getEvents = () =>
     fetch([baseURL, path].join('/')).then((response) => response.json());
 
+  const addEvent = (event) =>
+    fetch([baseURL, path].join('/'), {
+      method: 'POST',
+      body: JSON.stringify(event),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    }).then((response) => response.json());
+
   const deleteEvent = (id) => {
     fetch([baseURL, path, id].join('/')),
       {
         method: 'DELETE',
       };
   };
-
   return {
     getEvents,
+    addEvent,
     deleteEvent,
   };
 })();
@@ -115,6 +124,7 @@ const controller = ((model, view) => {
     });
   };
 
+  // incomplete
   const addEvent = () => {
     const newFields = document.createElement('section');
     newFields.id = 4; // not dyanmic
@@ -164,6 +174,7 @@ const controller = ((model, view) => {
   const bootstrap = () => {
     init();
     addEvent();
+    deleteEvent();
   };
 
   return { bootstrap };
