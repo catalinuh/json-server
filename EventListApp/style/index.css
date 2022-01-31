@@ -3,11 +3,88 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: #eeeeee;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content {
+  box-shadow: 2px 2px 2px #aeaeae;
+  width: 95%;
+  border: none;
+  background-color: #ffffff;
+  /* display: flex;
+  flex-direction: column; */
+}
+
+li {
+  list-style: none;
+}
+
+button {
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #5593c7;
+  border: none;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+button:hover {
+  background-color: #e9e9e9;
+}
+
+input {
+  height: 50%;
+  margin: auto;
+}
+
+button#add-new {
+  margin: 10px;
+}
+
+button.edit-delete {
+  margin: 5px;
+  background: none;
+}
+
+button.edit-delete:hover {
+  background-color: #e9e9e9;
+}
+
+.event-table {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.event-table__header {
+  background-color: #e3ebf7;
+  border-top: 2px solid #e0e0e0;
+  margin-top: 5px;
+  padding: 10px;
+
+  grid-column: 1 / span 4;
+  grid-row: 1;
+
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.event {
+  border-top: 2px solid #e0e0e0;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
