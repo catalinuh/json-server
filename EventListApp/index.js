@@ -50,6 +50,9 @@ const view = (() => {
     deleteBtn: '.delete-btn',
     saveBtn: '.save-btn',
     closeBtn: '.close-btn',
+    addEvent: '#add-event',
+    addStartField: '#add-start-field',
+    addEndField: '#add-end-field',
   };
 
   const render = (element, tmp) => {
@@ -64,7 +67,7 @@ const view = (() => {
       let date2 = new Date(parseInt(elem.endDate.substring(0, 11)));
 
       tmp += `
-        <section id=${elem.id} class="event">
+        <div id=${elem.id} class="event">
             <input value=${
               elem.eventName
             } class="event-field" type="text" aria-label="Event name" disabled />
@@ -98,7 +101,7 @@ const view = (() => {
                 <button class="edit-btn">Edit</button>
                 <button class="delete-btn">Delete</button>
             </div>
-        </section>
+        </div>
           `;
     });
 
@@ -172,19 +175,17 @@ const controller = ((model, view) => {
 
   // incomplete
   const addEvent = () => {
-    let eventListSize = model.getEvents().then(() => state.events.length);
-    const newFields = document.createElement('section');
-    newFields.id = 4; // not dyanmic
+    // let eventListSize = model.getEvents().then(() => state.events.length);
+    const newFields = document.createElement('div');
+    newFields.classList.add('event');
     newFields.innerHTML = `
-        <section class="event">
-            <input class="event-field" type="text" aria-label="Event name" />
-            <input class="start-field" type="date" aria-label="Start date" />
-            <input class="end-field" type="date" aria-label="End date" />
+            <input id="add-event" class="event-field" type="text" aria-label="Event name" />
+            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" />
+            <input id="add-end-field" class="end-field" type="date" aria-label="End date" />
             <div id="edit-delete">
                 <button class="save-btn">Save</button>
                 <button class="close-btn">Close</button>
             </div>
-        </section>
     `;
 
     let element = document.getElementById('event-list__container');
@@ -195,8 +196,30 @@ const controller = ((model, view) => {
 
       const saveBtn = document.querySelector(view.domStr.saveBtn);
       saveBtn.addEventListener('click', (e) => {
-        // find out how to bring id of event that was clicked on here
-        console.log(e.target.value);
+        let eventName = document.querySelector(view.domStr.addEvent).value;
+        let startDate =
+          '' +
+          new Date(
+            document.querySelector(view.domStr.addStartField).value
+          ).getTime();
+        console.log(startDate);
+        let endDate =
+          '' +
+          new Date(
+            document.querySelector(view.domStr.addEndField).value
+          ).getTime();
+        console.log(endDate);
+
+        model
+          .addEvent({
+            eventName: eventName,
+            startDate: startDate,
+            endDate: endDate,
+          })
+          .then((data) => {
+            console.log(data);
+            init();
+          });
       });
 
       const closeBtn = document.querySelector(view.domStr.closeBtn);
