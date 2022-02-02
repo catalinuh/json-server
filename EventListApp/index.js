@@ -64,7 +64,7 @@ const view = (() => {
       let date2 = new Date(parseInt(elem.endDate.substring(0, 11)));
 
       tmp += `
-        <section class="event">
+        <section id=${elem.id} class="event">
             <input value=${
               elem.eventName
             } class="event-field" type="text" aria-label="Event name" disabled />
@@ -96,7 +96,7 @@ const view = (() => {
             } class="end-field" type="date" aria-label="End date" disabled />
             <div id="edit-delete">
                 <button class="edit-btn">Edit</button>
-                <button class="delete-btn" id=${elem.id}>Delete</button>
+                <button class="delete-btn">Delete</button>
             </div>
         </section>
           `;
@@ -139,6 +139,10 @@ const model = ((api, view) => {
     }
   }
 
+  const clickedEdit = () => {
+    console.log('u clicked edit!');
+  };
+
   const getEvents = api.getEvents;
   const addEvent = api.addEvent;
   const deleteEvent = api.deleteEvent;
@@ -147,6 +151,7 @@ const model = ((api, view) => {
   return {
     Event,
     State,
+    clickedEdit,
     getEvents,
     addEvent,
     deleteEvent,
@@ -167,6 +172,7 @@ const controller = ((model, view) => {
 
   // incomplete
   const addEvent = () => {
+    let eventListSize = model.getEvents().then(() => state.events.length);
     const newFields = document.createElement('section');
     newFields.id = 4; // not dyanmic
     newFields.innerHTML = `
@@ -188,8 +194,9 @@ const controller = ((model, view) => {
       element.appendChild(newFields);
 
       const saveBtn = document.querySelector(view.domStr.saveBtn);
-      saveBtn.addEventListener('click', () => {
-        console.log('you clicked save!');
+      saveBtn.addEventListener('click', (e) => {
+        // find out how to bring id of event that was clicked on here
+        console.log(e.target.value);
       });
 
       const closeBtn = document.querySelector(view.domStr.closeBtn);
@@ -202,17 +209,19 @@ const controller = ((model, view) => {
 
   // incomplete
   const deleteEvent = () => {
-    const elem = document.querySelector(view.domStr.deleteBtn);
-
-    elem.addEventListener('click', (e) => {
-      state.eventList = state.eventList.filter((event) => {
-        return +event.id !== +e.target.id;
-      });
-      model.deleteEvent(e.target.id);
+    const deleteBtn = document.querySelector(view.domStr.deleteBtn);
+    deleteBtn.addEventListener('click', (e) => {
+      console.log('you clicked the delete button!');
     });
   };
 
-  const editEvent = () => {};
+  // incomplete
+  const editEvent = (id) => {
+    const editBtn = document.querySelector(view.domStr.editBtn);
+    editBtn.addEventListener('click', (e) => {
+      console.log('you clicked the edit button!');
+    });
+  };
 
   const bootstrap = () => {
     init();
