@@ -45,7 +45,6 @@ button:hover {
 
 input {
   height: 50%;
-  margin: auto;
 }
 
 button#add-new-btn {
@@ -87,6 +86,7 @@ div#edit-delete > button:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 
 #event-list__container {
