@@ -170,9 +170,6 @@ const controller = ((model, view) => {
     document.addEventListener('click', (e) => {
       if (e.target.id === 'add-new-btn') {
         element.appendChild(newFields);
-
-        saveBtn();
-        closeBtn();
       }
     });
   };
@@ -180,7 +177,13 @@ const controller = ((model, view) => {
   const saveBtn = () => {
     document.addEventListener('click', (e) => {
       if (e.target.className === 'save-btn') {
+        let eventArr = document.getElementsByClassName('event');
         let event = document.getElementById(e.target.id);
+
+        if (e.target.id.length <= 0) {
+          event = eventArr[eventArr.length - 1];
+        }
+
         let inputs = event.getElementsByTagName('input');
 
         let eventName = inputs[0].value;
@@ -194,9 +197,7 @@ const controller = ((model, view) => {
             endDate: endDate,
           })
           .then((newEvent) => {
-            console.log(e.target.id);
-            state.events[e.target.id - 1] = newEvent;
-            init();
+            state.events = [...state.events, newEvent];
           });
       }
     });
@@ -239,9 +240,6 @@ const controller = ((model, view) => {
         buttons[1].className = 'close-btn';
         buttons[1].innerHTML = 'Close';
       }
-
-      saveBtn();
-      closeBtn();
     });
   };
 
@@ -250,6 +248,8 @@ const controller = ((model, view) => {
     addEvent();
     deleteEvent();
     editEvent();
+    saveBtn();
+    closeBtn();
   };
 
   return { bootstrap };
