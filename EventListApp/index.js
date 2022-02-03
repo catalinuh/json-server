@@ -78,12 +78,12 @@ const view = (() => {
       let day2 = d2.getDate() < 10 ? '0' + d2.getDate() : d2.getDate();
       let endDate = [year2, month2, day2].join('-');
       tmp += `
-        <div class="event">
+        <div id=${elem.id} class="event">
             <input value=${elem.eventName} class="event-field" type="text" aria-label="Event name" disabled />
             <input value=${startDate} class="start-field" type="date" aria-label="Start date" disabled />
             <input value=${endDate} class="end-field" type="date" aria-label="End date" disabled />
             <div id="edit-delete">
-                <button class="edit-btn">Edit</button>
+                <button id=${elem.id} class="edit-btn">Edit</button>
                 <button id=${elem.id} class="delete-btn">Delete</button>
             </div>
         </div>
@@ -167,13 +167,49 @@ const controller = ((model, view) => {
     `;
 
     let element = document.getElementById('event-list__container');
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'add-new-btn') {
+        element.appendChild(newFields);
 
-    const addNewBtn = document.querySelector(view.domStr.addNewBtn);
-    addNewBtn.addEventListener('click', () => {
-      element.appendChild(newFields);
+        saveBtn();
+        closeBtn();
+      }
+    });
+  };
 
-      const saveBtn = document.querySelector(view.domStr.saveBtn);
-      saveBtn.addEventListener('click', () => {
+  const deleteEvent = () => {
+    document.addEventListener('click', (e) => {
+      if (e.target.className === 'delete-btn') {
+        state.events = state.events.filter((event) => {
+          return +event.id !== +e.target.id;
+        });
+        model.deleteEvent(e.target.id);
+      }
+    });
+  };
+
+  const editEvent = () => {
+    document.addEventListener('click', (e) => {
+      if (e.target.className === 'edit-btn') {
+        let event = document.getElementById(e.target.id);
+        let inputs = event.getElementsByTagName('input');
+        let buttons = event.getElementsByTagName('button');
+
+        for (let i = 0; i < inputs.length; i++) {
+          inputs[i].removeAttribute('disabled');
+        }
+
+        buttons[0].className = 'save-btn';
+        buttons[0].innerHTML = 'Save';
+        buttons[1].className = 'close-btn';
+        buttons[1].innerHTML = 'Close';
+      }
+    });
+  };
+
+  const saveBtn = () => {
+    document.addEventListener('click', (e) => {
+      if (e.target.className === 'save-btn') {
         let eventName = document.querySelector(view.domStr.addEvent).value;
 
         let startDate =
@@ -197,34 +233,18 @@ const controller = ((model, view) => {
           .then((newEvent) => {
             state.events = [...state.events, newEvent];
           });
-      });
-
-      const closeBtn = document.querySelector(view.domStr.closeBtn);
-      closeBtn.addEventListener('click', () => {
-        let eventArr = document.getElementsByClassName('event');
-        element.removeChild(eventArr[eventArr.length - 1]);
-      });
-    });
-  };
-
-  const deleteEvent = () => {
-    let element = document.getElementById('event-list__container');
-    element.addEventListener('click', (e) => {
-      // id of delete button is a number, id's of new input fields are not, so
-      // if the parsed int of the id being clicked is not NaN, so is a number, then
-      // delete the event
-      if (!isNaN(parseInt(e.target.id))) {
-        state.events = state.events.filter((event) => {
-          return +event.id !== +e.target.id;
-        });
-        model.deleteEvent(e.target.id);
       }
     });
   };
 
-  const editEvent = () => {
-    const editBtn = document.querySelector(view.domStr.editBtn);
-    editBtn.addEventListener('click', () => {});
+  const closeBtn = () => {
+    let element = document.getElementById('event-list__container');
+    element.addEventListener('click', (e) => {
+      if (e.target.className === 'close-btn') {
+        let eventArr = document.getElementsByClassName('event');
+        element.removeChild(eventArr[eventArr.length - 1]);
+      }
+    });
   };
 
   const bootstrap = () => {
