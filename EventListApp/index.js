@@ -175,15 +175,12 @@ const controller = ((model, view) => {
       const saveBtn = document.querySelector(view.domStr.saveBtn);
       saveBtn.addEventListener('click', () => {
         let eventName = document.querySelector(view.domStr.addEvent).value;
-        console.log(
-          'start date before edit: ',
-          document.querySelector(view.domStr.addStartField).value
-        );
-        let startDate = new Date(
-          document.querySelector(view.domStr.addStartField).value
-        );
 
-        console.log('start date after conversion: ', startDate);
+        let startDate =
+          '' +
+          new Date(
+            document.querySelector(view.domStr.addStartField).value
+          ).getTime();
 
         let endDate =
           '' +
@@ -204,9 +201,7 @@ const controller = ((model, view) => {
 
       const closeBtn = document.querySelector(view.domStr.closeBtn);
       closeBtn.addEventListener('click', () => {
-        console.log('you clicked the close button!');
         let eventArr = document.getElementsByClassName('event');
-        console.log(eventArr.length);
         element.removeChild(eventArr[eventArr.length - 1]);
       });
     });
@@ -214,16 +209,12 @@ const controller = ((model, view) => {
 
   const deleteEvent = () => {
     let element = document.getElementById('event-list__container');
-    element.addEventListener('click', (e) => {
-      console.log(e.target.value);
-    });
+    element.addEventListener('click', (e) => {});
   };
 
   const editEvent = () => {
     const editBtn = document.querySelector(view.domStr.editBtn);
-    editBtn.addEventListener('click', () => {
-      console.log('you clicked the edit button!');
-    });
+    editBtn.addEventListener('click', () => {});
   };
 
   const bootstrap = () => {
