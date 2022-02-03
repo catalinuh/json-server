@@ -19,15 +19,14 @@ const wikiApi = (() => {
       method: 'DELETE',
     });
 
-  const editEvent = (id) =>
+  const editEvent = (id, newData) =>
     fetch([baseURL, path, id].join('/'), {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
-    })
-      .then((response) => response.json())
-      .then((data) => (element.innerHTML = data.updatedAt));
+      body: JSON.stringify(newData),
+    }).then((response) => response.json());
 
   return {
     getEvents,
@@ -50,6 +49,7 @@ const view = (() => {
     deleteBtn: '.delete-btn',
     saveBtn: '.save-btn',
     closeBtn: '.close-btn',
+    cancelBtn: 'cancel-btn',
     addEvent: '#add-event',
     addStartField: '#add-start-field',
     addEndField: '#add-end-field',
@@ -157,9 +157,9 @@ const controller = ((model, view) => {
     const newFields = document.createElement('div');
     newFields.classList.add('event');
     newFields.innerHTML = `
-            <input id="add-event" class="event-field" type="text" aria-label="Event name" required />
-            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" required />
-            <input id="add-end-field" class="end-field" type="date" aria-label="End date" required />
+            <input id="add-event" class="event-field" type="text" aria-label="Event name" />
+            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" />
+            <input id="add-end-field" class="end-field" type="date" aria-label="End date" />
             <div id="edit-delete">
                 <button class="save-btn" type="submit">Save</button>
                 <button class="close-btn">Close</button>
@@ -170,35 +170,29 @@ const controller = ((model, view) => {
     document.addEventListener('click', (e) => {
       if (e.target.id === 'add-new-btn') {
         element.appendChild(newFields);
-      }
-    });
-  };
 
-  const saveBtn = () => {
-    document.addEventListener('click', (e) => {
-      if (e.target.className === 'save-btn') {
-        let eventArr = document.getElementsByClassName('event');
-        let event = document.getElementById(e.target.id);
+        document.addEventListener('click', (e) => {
+          if (e.target.className === 'save-btn') {
+            let eventArr = document.getElementsByClassName('event');
+            let event = eventArr[eventArr.length - 1];
 
-        if (e.target.id.length <= 0) {
-          event = eventArr[eventArr.length - 1];
-        }
+            let inputs = event.getElementsByTagName('input');
 
-        let inputs = event.getElementsByTagName('input');
+            let eventName = inputs[0].value;
+            let startDate = '' + new Date(inputs[1].value).getTime();
+            let endDate = '' + new Date(inputs[2].value).getTime();
 
-        let eventName = inputs[0].value;
-        let startDate = '' + new Date(inputs[1].value).getTime();
-        let endDate = '' + new Date(inputs[2].value).getTime();
-
-        model
-          .addEvent({
-            eventName: eventName,
-            startDate: startDate,
-            endDate: endDate,
-          })
-          .then((newEvent) => {
-            state.events = [...state.events, newEvent];
-          });
+            model
+              .addEvent({
+                eventName: eventName,
+                startDate: startDate,
+                endDate: endDate,
+              })
+              .then((newEvent) => {
+                state.events = [...state.events, newEvent];
+              });
+          }
+        });
       }
     });
   };
@@ -237,8 +231,51 @@ const controller = ((model, view) => {
 
         buttons[0].className = 'save-btn';
         buttons[0].innerHTML = 'Save';
-        buttons[1].className = 'close-btn';
-        buttons[1].innerHTML = 'Close';
+        buttons[1].className = 'cancel-btn';
+        buttons[1].innerHTML = 'Cancel';
+
+        document.addEventListener('click', (e) => {
+          if (e.target.className === 'cancel-btn') {
+            for (let i = 0; i < inputs.length; i++) {
+              inputs[i].setAttribute('disabled', '');
+            }
+
+            buttons[0].className = 'edit-btn';
+            buttons[0].innerHTML = 'Edit';
+            buttons[1].className = 'delete-btn';
+            buttons[1].innerHTML = 'Delete';
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (e.target.className === 'save-btn') {
+            let event = document.getElementById(e.target.id);
+            let inputs = event.getElementsByTagName('input');
+
+            let eventName = inputs[0].value;
+            let startDate = '' + new Date(inputs[1].value).getTime();
+            let endDate = '' + new Date(inputs[2].value).getTime();
+
+            model
+              .editEvent(e.target.id, {
+                eventName: eventName,
+                startDate: startDate,
+                endDate: endDate,
+              })
+              .then((newEvent) => {
+                state.events[e.target.id - 1] = newEvent;
+              });
+
+            for (let i = 0; i < inputs.length; i++) {
+              inputs[i].setAttribute('disabled', '');
+            }
+
+            buttons[0].className = 'edit-btn';
+            buttons[0].innerHTML = 'Edit';
+            buttons[1].className = 'delete-btn';
+            buttons[1].innerHTML = 'Delete';
+          }
+        });
       }
     });
   };
@@ -248,7 +285,7 @@ const controller = ((model, view) => {
     addEvent();
     deleteEvent();
     editEvent();
-    saveBtn();
+    // saveBtn();
     closeBtn();
   };
 
