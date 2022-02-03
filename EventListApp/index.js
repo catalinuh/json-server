@@ -63,40 +63,25 @@ const view = (() => {
     let tmp = '';
 
     array.forEach((elem) => {
-      let date1 = new Date(parseInt(elem.startDate.substring(0, 11)));
-      let date2 = new Date(parseInt(elem.endDate.substring(0, 11)));
+      let d1 = new Date(parseInt(elem.startDate));
+      let d2 = new Date(parseInt(elem.endDate));
 
+      let year1 = d1.getFullYear();
+      let month1 =
+        d1.getMonth() + 1 < 10 ? '0' + (d1.getMonth() + 1) : d1.getMonth() + 1;
+      let day1 = d1.getDate() < 10 ? '0' + d1.getDate() : d1.getDate();
+      let startDate = [year1, month1, day1].join('-');
+
+      let year2 = d2.getFullYear();
+      let month2 =
+        d2.getMonth() + 1 < 10 ? '0' + (d2.getMonth() + 1) : d2.getMonth() + 1;
+      let day2 = d2.getDate() < 10 ? '0' + d2.getDate() : d2.getDate();
+      let endDate = [year2, month2, day2].join('-');
       tmp += `
         <div id=${elem.id} class="event">
-            <input value=${
-              elem.eventName
-            } class="event-field" type="text" aria-label="Event name" disabled />
-            <input value=${
-              date1.getFullYear() +
-              '-' +
-              String(
-                date1.getMonth() < 10
-                  ? '0' + date1.getMonth()
-                  : date1.getMonth()
-              ) +
-              '-' +
-              String(
-                date1.getDay() < 10 ? '0' + date1.getDay() : date1.getDay()
-              )
-            } class="start-field" type="date" aria-label="Start date" disabled />
-            <input value=${
-              date2.getFullYear() +
-              '-' +
-              String(
-                date2.getMonth() < 10
-                  ? '0' + date2.getMonth()
-                  : date2.getMonth()
-              ) +
-              '-' +
-              String(
-                date2.getDay() < 10 ? '0' + date2.getDay() : date2.getDay()
-              )
-            } class="end-field" type="date" aria-label="End date" disabled />
+            <input value=${elem.eventName} class="event-field" type="text" aria-label="Event name" disabled />
+            <input value=${startDate} class="start-field" type="date" aria-label="Start date" disabled />
+            <input value=${endDate} class="end-field" type="date" aria-label="End date" disabled />
             <div id="edit-delete">
                 <button class="edit-btn">Edit</button>
                 <button class="delete-btn">Delete</button>
@@ -142,10 +127,6 @@ const model = ((api, view) => {
     }
   }
 
-  const clickedEdit = () => {
-    console.log('u clicked edit!');
-  };
-
   const getEvents = api.getEvents;
   const addEvent = api.addEvent;
   const deleteEvent = api.deleteEvent;
@@ -154,7 +135,6 @@ const model = ((api, view) => {
   return {
     Event,
     State,
-    clickedEdit,
     getEvents,
     addEvent,
     deleteEvent,
@@ -173,17 +153,15 @@ const controller = ((model, view) => {
     });
   };
 
-  // incomplete
   const addEvent = () => {
-    // let eventListSize = model.getEvents().then(() => state.events.length);
     const newFields = document.createElement('div');
     newFields.classList.add('event');
     newFields.innerHTML = `
-            <input id="add-event" class="event-field" type="text" aria-label="Event name" />
-            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" />
-            <input id="add-end-field" class="end-field" type="date" aria-label="End date" />
+            <input id="add-event" class="event-field" type="text" aria-label="Event name" required />
+            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" required />
+            <input id="add-end-field" class="end-field" type="date" aria-label="End date" required />
             <div id="edit-delete">
-                <button class="save-btn">Save</button>
+                <button class="save-btn" type="submit">Save</button>
                 <button class="close-btn">Close</button>
             </div>
     `;
@@ -195,20 +173,23 @@ const controller = ((model, view) => {
       element.appendChild(newFields);
 
       const saveBtn = document.querySelector(view.domStr.saveBtn);
-      saveBtn.addEventListener('click', (e) => {
+      saveBtn.addEventListener('click', () => {
         let eventName = document.querySelector(view.domStr.addEvent).value;
-        let startDate =
-          '' +
-          new Date(
-            document.querySelector(view.domStr.addStartField).value
-          ).getTime();
-        console.log(startDate);
+        console.log(
+          'start date before edit: ',
+          document.querySelector(view.domStr.addStartField).value
+        );
+        let startDate = new Date(
+          document.querySelector(view.domStr.addStartField).value
+        );
+
+        console.log('start date after conversion: ', startDate);
+
         let endDate =
           '' +
           new Date(
             document.querySelector(view.domStr.addEndField).value
           ).getTime();
-        console.log(endDate);
 
         model
           .addEvent({
@@ -216,32 +197,31 @@ const controller = ((model, view) => {
             startDate: startDate,
             endDate: endDate,
           })
-          .then((data) => {
-            console.log(data);
-            init();
+          .then((newEvent) => {
+            state.events = [...state.events, newEvent];
           });
       });
 
       const closeBtn = document.querySelector(view.domStr.closeBtn);
       closeBtn.addEventListener('click', () => {
-        const toBeRemoved = document.getElementById(4);
-        element.removeChild(toBeRemoved);
+        console.log('you clicked the close button!');
+        let eventArr = document.getElementsByClassName('event');
+        console.log(eventArr.length);
+        element.removeChild(eventArr[eventArr.length - 1]);
       });
     });
   };
 
-  // incomplete
   const deleteEvent = () => {
-    const deleteBtn = document.querySelector(view.domStr.deleteBtn);
-    deleteBtn.addEventListener('click', (e) => {
-      console.log('you clicked the delete button!');
+    let element = document.getElementById('event-list__container');
+    element.addEventListener('click', (e) => {
+      console.log(e.target.value);
     });
   };
 
-  // incomplete
-  const editEvent = (id) => {
+  const editEvent = () => {
     const editBtn = document.querySelector(view.domStr.editBtn);
-    editBtn.addEventListener('click', (e) => {
+    editBtn.addEventListener('click', () => {
       console.log('you clicked the edit button!');
     });
   };
