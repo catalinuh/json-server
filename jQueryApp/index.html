@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style/index.css" />
+    <script async src="./index.js" type="module"></script>
+    <title>EventList</title>
+  </head>
+  <body>
+    <main class="content">
+      <header class="button-header">
+        <button id="add-new-btn">Add New</button>
+      </header>
+      <section class="event-table">
+        <ul class="event-table__header">
+          <li>Event name</li>
+          <li>Start date</li>
+          <li>End date</li>
+          <li>Actions</li>
+        </ul>
+      </section>
+      <section id="event-list__container">
+        <div class="event">
+          <input class="event-field" type="text" aria-label="Event name" />
+          <input class="start-field" type="date" aria-label="Start date" />
+          <input class="end-field" type="date" aria-label="End date" />
+          <div id="edit-delete">
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
