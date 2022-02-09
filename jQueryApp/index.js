@@ -166,44 +166,31 @@ const controller = ((model, view) => {
             </div>
     `;
 
-    let element = document.getElementById('event-list__container');
-    document.addEventListener('click', (e) => {
-      if (e.target.id === 'add-new-btn') {
-        element.appendChild(newFields);
+    $('#add-new-btn').click(function () {
+      $('#event-list__container').append(newFields);
+      $('.save-btn').click(function () {
+        let eventArr = $('.event');
+        let event = eventArr[eventArr.length - 1];
+        let inputs = $(event).find('input');
+        let eventName = inputs[0].value;
+        let startDate = '' + new Date(inputs[1].value).getTime();
+        let endDate = '' + new Date(inputs[2].value).getTime();
 
-        document.addEventListener('click', (e) => {
-          if (e.target.className === 'save-btn') {
-            let eventArr = document.getElementsByClassName('event');
-            let event = eventArr[eventArr.length - 1];
+        model
+          .addEvent({
+            eventName: eventName,
+            startDate: startDate,
+            endDate: endDate,
+          })
+          .then((newEvent) => {
+            state.events = [...state.events, newEvent];
+          });
+      });
 
-            let inputs = event.getElementsByTagName('input');
-
-            let eventName = inputs[0].value;
-            let startDate = '' + new Date(inputs[1].value).getTime();
-            let endDate = '' + new Date(inputs[2].value).getTime();
-
-            model
-              .addEvent({
-                eventName: eventName,
-                startDate: startDate,
-                endDate: endDate,
-              })
-              .then((newEvent) => {
-                state.events = [...state.events, newEvent];
-              });
-          }
-        });
-      }
-    });
-  };
-
-  const closeBtn = () => {
-    let element = document.getElementById('event-list__container');
-    element.addEventListener('click', (e) => {
-      if (e.target.className === 'close-btn') {
-        let eventArr = document.getElementsByClassName('event');
-        element.removeChild(eventArr[eventArr.length - 1]);
-      }
+      $('.close-btn').click(function () {
+        let eventArr = $('.event');
+        $(eventArr[eventArr.length - 1]).remove();
+      });
     });
   };
 
@@ -285,8 +272,6 @@ const controller = ((model, view) => {
     addEvent();
     deleteEvent();
     editEvent();
-    // saveBtn();
-    closeBtn();
   };
 
   return { bootstrap };
