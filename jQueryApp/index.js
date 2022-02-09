@@ -155,16 +155,17 @@ const controller = ((model, view) => {
 
   const addEvent = () => {
     const newFields = document.createElement('div');
-    newFields.classList.add('event');
-    newFields.innerHTML = `
-            <input id="add-event" class="event-field" type="text" aria-label="Event name" />
-            <input id="add-start-field" class="start-field" type="date" aria-label="Start date" />
-            <input id="add-end-field" class="end-field" type="date" aria-label="End date" />
-            <div id="edit-delete">
-                <button class="save-btn" type="submit">Save</button>
-                <button class="close-btn">Close</button>
-            </div>
-    `;
+    $(newFields).addClass('event');
+    // newFields.classList.add('event');
+    $(newFields).html(`
+      <input id="add-event" class="event-field" type="text" aria-label="Event name" />
+      <input id="add-start-field" class="start-field" type="date" aria-label="Start date" />
+      <input id="add-end-field" class="end-field" type="date" aria-label="End date" />
+      <div id="edit-delete">
+          <button class="save-btn" type="submit">Save</button>
+          <button class="close-btn">Close</button>
+      </div>
+    `);
 
     $('#add-new-btn').click(function () {
       $('#event-list__container').append(newFields);
@@ -195,6 +196,12 @@ const controller = ((model, view) => {
   };
 
   const deleteEvent = () => {
+    // $('.delete-btn').click(function () {
+    //   state.events = state.events.filter((event) => {
+    //     return +event.id !== +e.target.id;
+    //   });
+    //   model.deleteEvent(e.target.id);
+    // });
     document.addEventListener('click', (e) => {
       if (e.target.className === 'delete-btn') {
         state.events = state.events.filter((event) => {
@@ -208,13 +215,14 @@ const controller = ((model, view) => {
   const editEvent = () => {
     document.addEventListener('click', (e) => {
       if (e.target.className === 'edit-btn') {
-        let event = document.getElementById(e.target.id);
-        let inputs = event.getElementsByTagName('input');
-        let buttons = event.getElementsByTagName('button');
+        let event = $(`#${e.target.id}`);
+        let inputs = $(event).find('input');
+        let buttons = $(event).find('button');
 
-        for (let i = 0; i < inputs.length; i++) {
-          inputs[i].removeAttribute('disabled');
-        }
+        // for (let i = 0; i < inputs.length; i++) {
+        //   inputs[i].removeAttribute('disabled');
+        // }
+        inputs.removeAttr('disabled');
 
         buttons[0].className = 'save-btn';
         buttons[0].innerHTML = 'Save';
@@ -223,21 +231,19 @@ const controller = ((model, view) => {
 
         document.addEventListener('click', (e) => {
           if (e.target.className === 'cancel-btn') {
-            for (let i = 0; i < inputs.length; i++) {
-              inputs[i].setAttribute('disabled', '');
-            }
+            inputs.attr('disabled', '');
 
-            buttons[0].className = 'edit-btn';
-            buttons[0].innerHTML = 'Edit';
-            buttons[1].className = 'delete-btn';
-            buttons[1].innerHTML = 'Delete';
+            $(buttons[0]).attr('class', 'edit-btn');
+            $(buttons[0]).html('Edit');
+            $(buttons[1]).attr('class', 'delete-btn');
+            $(buttons[1]).html('Delete');
           }
         });
 
         document.addEventListener('click', (e) => {
           if (e.target.className === 'save-btn') {
-            let event = document.getElementById(e.target.id);
-            let inputs = event.getElementsByTagName('input');
+            let event = $(`#${e.target.id}`);
+            let inputs = $(event).find('input');
 
             let eventName = inputs[0].value;
             let startDate = '' + new Date(inputs[1].value).getTime();
@@ -253,14 +259,12 @@ const controller = ((model, view) => {
                 state.events[e.target.id - 1] = newEvent;
               });
 
-            for (let i = 0; i < inputs.length; i++) {
-              inputs[i].setAttribute('disabled', '');
-            }
+            inputs.attr('disabled', '');
 
-            buttons[0].className = 'edit-btn';
-            buttons[0].innerHTML = 'Edit';
-            buttons[1].className = 'delete-btn';
-            buttons[1].innerHTML = 'Delete';
+            $(buttons[0]).attr('class', 'edit-btn');
+            $(buttons[0]).html('Edit');
+            $(buttons[1]).attr('class', 'delete-btn');
+            $(buttons[1]).html('Delete');
           }
         });
       }
@@ -269,9 +273,9 @@ const controller = ((model, view) => {
 
   const bootstrap = () => {
     init();
-    addEvent();
     deleteEvent();
     editEvent();
+    addEvent();
   };
 
   return { bootstrap };
